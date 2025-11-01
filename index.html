@@ -26,7 +26,7 @@ body {
   user-select:none;
 }
 
-/* Hintergrund mit flüssigen Farbverläufen */
+/* Hintergrund Animation */
 body::before {
   content:'';
   position:fixed;
@@ -59,7 +59,7 @@ body::before {
   padding:20px;
 }
 
-/* Cards mit verstärktem Liquid Glass Effekt */
+/* Cards */
 .card {
   background: linear-gradient(135deg, rgba(30,15,50,0.5), rgba(60,30,100,0.3));
   border-radius:25px;
@@ -80,7 +80,6 @@ body::before {
   box-shadow: 0 15px 50px rgba(155,48,255,0.8), 0 0 20px rgba(155,48,255,0.5) inset;
 }
 
-/* Schwebende Cards Animation */
 @keyframes floatCards {
   0%,100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
@@ -109,7 +108,7 @@ p { color: rgba(224,215,255,0.7); font-size:15px; margin-bottom:15px; }
 .link-btn {
   display:flex;
   align-items:center;
-  justify-content:center; /* zentriert */
+  justify-content:center;
   background: rgba(90,0,130,0.25);
   color:#e0d7ff;
   text-decoration:none;
@@ -133,9 +132,137 @@ p { color: rgba(224,215,255,0.7); font-size:15px; margin-bottom:15px; }
   transform: translateY(-2px);
 }
 
+/* Musik-Controller unten mittig */
+#musicController {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  gap:8px;
+  z-index:10;
+}
+
+/* Play/Pause Button */
+#musicToggle {
+  width:60px;
+  height:60px;
+  background: rgba(155,48,255,0.4);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(155,48,255,0.6);
+}
+
+#musicToggle:hover {
+  background: rgba(155,48,255,0.6);
+}
+
+/* Pause/Play Symbol */
+#musicToggle div {
+  width: 16px;
+  height: 24px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#musicToggle div span {
+  display:block;
+  background:#fff;
+  border-radius:2px;
+  transition: all 0.3s ease;
+}
+
+/* Pause: zwei Striche */
+#musicToggle div span.pause-left, #musicToggle div span.pause-right {
+  width:5px;
+  height:100%;
+  margin:0 2px;
+}
+
+/* Play: Dreieck */
+#musicToggle.play div span.pause-left {
+  width:0;
+  height:0;
+  border-left:10px solid #fff;
+  border-top:6px solid transparent;
+  border-bottom:6px solid transparent;
+  margin:0;
+}
+
+#musicToggle.play div span.pause-right {
+  display:none;
+}
+
+/* Lautstärke Container */
+#volumeContainer {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background: rgba(90,0,130,0.25);
+  padding:5px 10px;
+  border-radius:12px;
+  backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 0 8px rgba(155,48,255,0.5);
+}
+
+/* Lautstärke Icon */
+#volumeIcon {
+  color: #e0d7ff;
+  font-size:18px;
+}
+
+/* Lautstärke Slider */
+#volumeSlider {
+  -webkit-appearance: none;
+  width:120px;
+  height:6px;
+  border-radius:6px;
+  background: rgba(255,255,255,0.2);
+  cursor:pointer;
+  transition: all 0.3s ease;
+}
+
+#volumeSlider::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background: #9b30ff;
+  box-shadow: 0 0 10px rgba(155,48,255,0.8);
+  transition: all 0.3s ease;
+}
+
+#volumeSlider:hover::-webkit-slider-thumb {
+  transform: scale(1.2);
+}
 </style>
 </head>
 <body>
+
+<!-- Hintergrundmusik -->
+<audio id="bgMusic" src="musik.mp3" loop autoplay></audio>
+
+<!-- Musik-Controller -->
+<div id="musicController">
+  <div id="musicToggle">
+    <div>
+      <span class="pause-left"></span>
+      <span class="pause-right"></span>
+    </div>
+  </div>
+  <div id="volumeContainer">
+    <i class="fas fa-volume-up" id="volumeIcon"></i>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5">
+  </div>
+</div>
 
 <div class="container">
   <!-- Linke Spalte -->
@@ -166,6 +293,28 @@ p { color: rgba(224,215,255,0.7); font-size:15px; margin-bottom:15px; }
     <a href="https://mc-host24.de/donate/hoelzchen" class="link-btn"><i class="fas fa-donate"></i>Spenden</a>
   </div>
 </div>
+
+<script>
+const music = document.getElementById('bgMusic');
+const toggle = document.getElementById('musicToggle');
+const slider = document.getElementById('volumeSlider');
+
+music.volume = slider.value;
+
+slider.addEventListener('input', () => {
+  music.volume = slider.value;
+});
+
+toggle.addEventListener('click', () => {
+  if (music.paused) {
+    music.play();
+    toggle.classList.remove('play');
+  } else {
+    music.pause();
+    toggle.classList.add('play');
+  }
+});
+</script>
 
 </body>
 </html>
